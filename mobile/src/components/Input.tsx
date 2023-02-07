@@ -7,7 +7,7 @@ export function Input({ ...rest }: Props) {
     <NativeBaseInput
       px={4}
       pt={3}
-      mt={4}
+      mb={4}
       rounded="lg"
       bg="gray.100"
       placeholderTextColor="gray.400"
