@@ -11,6 +11,7 @@ export function Input({ ...rest }: Props) {
       rounded="lg"
       bg="gray.100"
       placeholderTextColor="gray.400"
+      borderWidth={0}
       fontSize="md"
       color="gray.600"
       _focus={{
