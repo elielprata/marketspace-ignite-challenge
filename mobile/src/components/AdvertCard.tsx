@@ -1,4 +1,4 @@
-import { Box, Center, Heading, Image, Text, VStack } from "native-base";
+import { Center, Heading, Image, Text, VStack } from "native-base";
 
 import ProductImg from "@assets/product2.png";
 import AvatarImg from "@assets/avatar.png";
