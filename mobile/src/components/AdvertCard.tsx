@@ -1,4 +1,4 @@
-import { Center, Heading, Image, Text, VStack } from "native-base";
+import { Box, Center, Heading, Image, Text, VStack } from "native-base";
 
 import ProductImg from "@assets/product2.png";
 import AvatarImg from "@assets/avatar.png";
@@ -7,12 +7,14 @@ import { UserPhoto } from "./UserPhoto";
 
 type Props = {
   condition: "new" | "used";
+  active?: boolean;
 };
 
-export function AdvertCard({ condition }: Props) {
+export function AdvertCard({ condition, active = true }: Props) {
   return (
     <VStack w={150} mb={6}>
       <Image
+        bg="gray.700"
         h={100}
         w={150}
         resizeMode="cover"
@@ -43,15 +45,37 @@ export function AdvertCard({ condition }: Props) {
         </Text>
       </Center>
 
-      <VStack ml={1} mt={1}>
+      <VStack ml={1} mt={1} opacity={!active ? 0.5 : 1}>
         <Text>Tênis vermelho</Text>
-        <Heading fontSize="md" fontFamily="heading">
+        <Text
+          fontSize="md"
+          fontFamily="body"
+          fontWeight={active ? "bold" : "normal"}
+        >
           R${" "}
-          <Heading fontSize="xl" fontFamily="heading">
+          <Text
+            fontSize="xl"
+            fontFamily="body"
+            fontWeight={active ? "bold" : "normal"}
+          >
             59,90
-          </Heading>
-        </Heading>
+          </Text>
+        </Text>
       </VStack>
+
+      {!active && (
+        <Box w={150} h={100} position="absolute" bg="gray.700:alpha.50">
+          <Text
+            color="gray.100"
+            fontSize="sm"
+            position="absolute"
+            bottom={2}
+            left={2}
+          >
+            ANÚNCIO DESATIVADO
+          </Text>
+        </Box>
+      )}
     </VStack>
   );
 }
