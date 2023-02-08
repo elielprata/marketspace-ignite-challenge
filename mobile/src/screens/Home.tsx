@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ScrollView } from "react-native";
 import { FlatList, Heading, HStack, Text, useTheme, VStack } from "native-base";
 import { ArrowRight, Tag } from "phosphor-react-native";
 
