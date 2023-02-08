@@ -18,6 +18,15 @@ export function Button({ title, variant = "main", ...rest }: Props) {
           : "blue.400"
       }
       rounded="lg"
+      _pressed={{
+        bg:
+          variant === "dark"
+            ? "gray.700"
+            : variant === "light"
+            ? "gray.300"
+            : "blue.400",
+        opacity: 0.5,
+      }}
       {...rest}
     >
       <Text
