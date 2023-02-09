@@ -3,8 +3,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { House, SignOut, Tag } from "phosphor-react-native";
 import { useTheme } from "native-base";
 
-import { Home } from "@screens/Home";
+import { HomeStack } from "./home.routes";
+
 import { MyAdverts } from "@screens/MyAdverts";
+import { LogOut } from "@screens/LogOut";
 
 type AuthRoutes = {
   home: undefined;
@@ -38,7 +40,7 @@ export function AppRoutes() {
     >
       <Screen
         name="home"
-        component={Home}
+        component={HomeStack}
         options={{
           tabBarIcon: ({ color, focused }) => (
             <House
@@ -66,7 +68,7 @@ export function AppRoutes() {
 
       <Screen
         name="logout"
-        component={Home}
+        component={LogOut}
         options={{
           tabBarIcon: () => <SignOut color={colors.red[400]} size={IconSize} />,
         }}
