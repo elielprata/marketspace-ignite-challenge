@@ -1,8 +1,18 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 import { AdvertDetails } from "@screens/AdvertDetails";
 import { Home } from "@screens/Home";
 
-const { Navigator, Screen } = createNativeStackNavigator();
+type HomeRoutes = {
+  home: undefined;
+  advertDetails: undefined;
+};
+
+export type HomeNavigatorRoutesProps = NativeStackNavigationProp<HomeRoutes>;
+
+const { Navigator, Screen } = createNativeStackNavigator<HomeRoutes>();
 
 export function HomeStack() {
   return (

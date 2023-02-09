@@ -1,5 +1,8 @@
 import { Platform } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  BottomTabNavigationProp,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
 import { House, SignOut, Tag } from "phosphor-react-native";
 import { useTheme } from "native-base";
 
@@ -8,13 +11,15 @@ import { HomeStack } from "./home.routes";
 import { MyAdverts } from "@screens/MyAdverts";
 import { LogOut } from "@screens/LogOut";
 
-type AuthRoutes = {
+type AppRoutes = {
   home: undefined;
   myAdverts: undefined;
   logout: undefined;
 };
 
-const { Navigator, Screen } = createBottomTabNavigator<AuthRoutes>();
+export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
+
+const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>();
 
 export function AppRoutes() {
   const { sizes, colors } = useTheme();
