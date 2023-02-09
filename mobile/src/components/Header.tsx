@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { Button, Heading, HStack, useTheme } from "native-base";
 import { IHStackProps } from "native-base/lib/typescript/components/primitives/Stack/HStack";
 import { ArrowLeft, PencilSimpleLine, Plus } from "phosphor-react-native";
@@ -16,9 +17,17 @@ export function Header({
 }: Props) {
   const { colors, sizes } = useTheme();
 
+  const navigation = useNavigation();
+
   return (
     <HStack justifyContent="space-between" alignItems="center" {...rest}>
-      <Button w={6} p={0} bg="transparent" _pressed={{ bg: "transparent" }}>
+      <Button
+        w={6}
+        p={0}
+        bg="transparent"
+        _pressed={{ bg: "transparent" }}
+        onPress={() => navigation.goBack()}
+      >
         {goBack && <ArrowLeft color={colors.gray[700]} size={sizes[6]} />}
       </Button>
 
