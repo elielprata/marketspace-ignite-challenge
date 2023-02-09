@@ -1,13 +1,14 @@
 import { Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { House, SignOut, Tag } from "phosphor-react-native";
 import { useTheme } from "native-base";
 
 import { Home } from "@screens/Home";
-import { House, SignOut, Tag } from "phosphor-react-native";
+import { MyAdverts } from "@screens/MyAdverts";
 
 type AuthRoutes = {
   home: undefined;
-  adverts: undefined;
+  myAdverts: undefined;
   logout: undefined;
 };
 
@@ -29,6 +30,7 @@ export function AppRoutes() {
         tabBarStyle: {
           backgroundColor: colors.gray[100],
           borderTopWidth: 0,
+          height: Platform.OS === "android" ? "auto" : 60,
           paddingBottom: sizes[8],
           paddingTop: sizes[6],
         },
@@ -49,8 +51,8 @@ export function AppRoutes() {
       />
 
       <Screen
-        name="adverts"
-        component={Home}
+        name="myAdverts"
+        component={MyAdverts}
         options={{
           tabBarIcon: ({ color, focused }) => (
             <Tag
