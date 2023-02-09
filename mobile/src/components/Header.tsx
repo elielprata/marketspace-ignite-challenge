@@ -1,11 +1,12 @@
 import { Button, Heading, HStack, useTheme } from "native-base";
-import { ArrowLeft, Plus } from "phosphor-react-native";
+import { ArrowLeft, PencilSimpleLine, Plus } from "phosphor-react-native";
 
 type Props = {
   goBack?: boolean;
+  rightIcon?: "plus" | "pencil" | null;
 };
 
-export function Header({ goBack = true }: Props) {
+export function Header({ goBack = true, rightIcon = null }: Props) {
   const { colors, sizes } = useTheme();
 
   return (
@@ -18,8 +19,19 @@ export function Header({ goBack = true }: Props) {
         Meus anúncios
       </Heading>
 
-      <Button w={6} p={0} bg="transparent" _pressed={{ bg: "transparent" }}>
-        <Plus color={colors.gray[700]} size={sizes[6]} />
+      <Button
+        w={6}
+        p={0}
+        bg="transparent"
+        rounded="full"
+        _pressed={{ bg: "transparent", opacity: 0.3 }}
+      >
+        {rightIcon === "plus" && (
+          <Plus color={colors.gray[700]} size={sizes[6]} />
+        )}
+        {rightIcon === "pencil" && (
+          <PencilSimpleLine color={colors.gray[700]} size={sizes[6]} />
+        )}
       </Button>
     </HStack>
   );
