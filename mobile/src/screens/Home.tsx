@@ -5,10 +5,18 @@ import { ArrowRight, Tag } from "phosphor-react-native";
 import { HomeHeader } from "@components/HomeHeader";
 import { SearchInput } from "@components/SearchInput";
 import { AdvertCard } from "@components/AdvertCard";
+import { useNavigation } from "@react-navigation/native";
+import { HomeNavigatorRoutesProps } from "@routes/home.routes";
 
 export function Home() {
-  const { colors, sizes } = useTheme();
   const [adverts, setAdverts] = useState([1, 2, 3, 4, 5, 6, 7]);
+
+  const { colors, sizes } = useTheme();
+  const navigation = useNavigation<HomeNavigatorRoutesProps>();
+
+  function handleOpenAdvertDetails() {
+    navigation.navigate("advertDetails");
+  }
 
   return (
     <VStack flex={1} bg="gray.200" px={6} pt={16}>
@@ -47,7 +55,9 @@ export function Home() {
       <FlatList
         data={adverts}
         keyExtractor={(item: number) => `${item}`}
-        renderItem={() => <AdvertCard condition="new" />}
+        renderItem={() => (
+          <AdvertCard condition="new" onPress={handleOpenAdvertDetails} />
+        )}
         flex={1}
         showsVerticalScrollIndicator={false}
         numColumns={2}
