@@ -1,5 +1,8 @@
+import { useNavigation } from "@react-navigation/native";
 import { Heading, HStack, Text, useTheme, VStack } from "native-base";
 import { Plus } from "phosphor-react-native";
+
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 import AvatarImg from "@assets/avatar.png";
 
@@ -8,6 +11,9 @@ import { Button } from "./Button";
 
 export function HomeHeader() {
   const { colors, sizes } = useTheme();
+
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
   return (
     <HStack mb={4}>
       <UserPhoto source={AvatarImg} size={45} alt="Imagem do usuário" mr={2} />
@@ -19,7 +25,11 @@ export function HomeHeader() {
         </Heading>
       </VStack>
 
-      <Button title="Criar anúncio" variant="dark">
+      <Button
+        title="Criar anúncio"
+        variant="dark"
+        onPress={() => navigation.navigate("createAdvert")}
+      >
         <Plus color={colors.gray["200"]} size={sizes["4"]} weight="bold" />
       </Button>
     </HStack>
