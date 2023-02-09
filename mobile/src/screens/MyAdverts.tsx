@@ -12,7 +12,7 @@ export function MyAdverts() {
 
   return (
     <VStack flex={1} bg="gray.200" px={6} pt={16}>
-      <Header goBack={false} rightIcon="plus" />
+      <Header title="Meus anúncios" goBack={false} rightIcon="plus" />
 
       <HStack mt={8} mb={5} justifyContent="space-between" alignItems="center">
         <Text fontSize="sm">10 Anúncios</Text>

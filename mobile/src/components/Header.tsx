@@ -2,11 +2,12 @@ import { Button, Heading, HStack, useTheme } from "native-base";
 import { ArrowLeft, PencilSimpleLine, Plus } from "phosphor-react-native";
 
 type Props = {
+  title: string;
   goBack?: boolean;
   rightIcon?: "plus" | "pencil" | null;
 };
 
-export function Header({ goBack = true, rightIcon = null }: Props) {
+export function Header({ title, goBack = true, rightIcon = null }: Props) {
   const { colors, sizes } = useTheme();
 
   return (
@@ -16,7 +17,7 @@ export function Header({ goBack = true, rightIcon = null }: Props) {
       </Button>
 
       <Heading fontFamily="heading" color="gray.700" fontSize="xl">
-        Meus anúncios
+        {title}
       </Heading>
 
       <Button
