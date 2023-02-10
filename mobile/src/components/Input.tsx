@@ -58,7 +58,7 @@ export function Input({
           </TouchableOpacity>
         )}
       </HStack>
-      <FormControl.ErrorMessage>{errorMessage}</FormControl.ErrorMessage>
+      <FormControl.ErrorMessage pl={3}>{errorMessage}</FormControl.ErrorMessage>
     </FormControl>
   );
 }
