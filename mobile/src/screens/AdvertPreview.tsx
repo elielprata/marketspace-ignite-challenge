@@ -121,7 +121,7 @@ export function AdvertPreview() {
           <ArrowLeft color={colors.gray[600]} size={sizes[4]} />
         </Button>
 
-        <Button title="Avançar" flex={1} onPress={() => {}}>
+        <Button title="Publicar" flex={1} onPress={() => {}}>
           <Tag color={colors.gray[200]} size={sizes[4]} />
         </Button>
       </HStack>
