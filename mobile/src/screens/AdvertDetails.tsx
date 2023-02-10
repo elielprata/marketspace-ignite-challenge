@@ -1,4 +1,3 @@
-import { Header } from "@components/Header";
 import { HStack, Image, ScrollView, Text, useTheme, VStack } from "native-base";
 import {
   Bank,
@@ -12,6 +11,7 @@ import {
 import AvatarImg from "@assets/avatar.png";
 import ProductImg from "@assets/product.png";
 
+import { Header } from "@components/Header";
 import { UserPhoto } from "@components/UserPhoto";
 import { Button } from "@components/Button";
 
