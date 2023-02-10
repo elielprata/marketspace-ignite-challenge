@@ -18,7 +18,7 @@ import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { UserPhoto } from "@components/UserPhoto";
 
-export function SignOut() {
+export function SignUp() {
   const { colors, sizes } = useTheme();
 
   return (
