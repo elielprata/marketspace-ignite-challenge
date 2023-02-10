@@ -44,7 +44,7 @@ export function Input({
             bg: "gray.100",
             borderColor: "gray.500",
           }}
-          secureTextEntry={!seePassword}
+          secureTextEntry={isPassword && !seePassword}
           {...rest}
         />
 
