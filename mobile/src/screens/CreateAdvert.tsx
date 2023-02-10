@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import {
   Center,
   HStack,
@@ -7,14 +8,18 @@ import {
   Text,
   VStack,
 } from "native-base";
+import { Plus } from "phosphor-react-native";
+
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 import { Button } from "@components/Button";
 import { CheckBox } from "@components/CheckBox";
 import { Header } from "@components/Header";
 import { Input } from "@components/Input";
-import { Plus } from "phosphor-react-native";
 
 export function CreateAdvert() {
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
   return (
     <VStack flex={1} bg="gray.200" pt={16}>
       <ScrollView
@@ -122,7 +127,12 @@ export function CreateAdvert() {
       >
         <Button title="Cancelar" variant="light" mr={3} flex={1} />
 
-        <Button title="Avançar" variant="dark" flex={1} />
+        <Button
+          title="Avançar"
+          variant="dark"
+          flex={1}
+          onPress={() => navigation.navigate("advertPreview")}
+        />
       </HStack>
     </VStack>
   );
