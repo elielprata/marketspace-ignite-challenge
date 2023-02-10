@@ -9,11 +9,13 @@ import { HomeTabs } from "./home.routes";
 
 import { AdvertDetails } from "@screens/AdvertDetails";
 import { CreateAdvert } from "@screens/CreateAdvert";
+import { AdvertPreview } from "@screens/AdvertPreview";
 
 type AppRoutes = {
   home: undefined;
   advertDetails: undefined;
   createAdvert: undefined;
+  advertPreview: undefined;
 };
 
 export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>;
@@ -36,6 +38,8 @@ export function AppRoutes() {
       <Screen name="advertDetails" component={AdvertDetails} />
 
       <Screen name="createAdvert" component={CreateAdvert} />
+
+      <Screen name="advertPreview" component={AdvertPreview} />
     </Navigator>
   );
 }
