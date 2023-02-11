@@ -43,7 +43,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   async function signOut() {
     try {
       setUser({} as UserDTO);
-      storageUserRemove();
+      await storageUserRemove();
     } catch (error) {
       throw error;
     }
