@@ -1,23 +1,70 @@
-import { Center, Heading, Image, Text, VStack } from "native-base";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigation } from "@react-navigation/native";
+import { Center, Image, Text, useToast, VStack } from "native-base";
+
+import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
 import LogoImg from "@assets/logo.png";
+
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { AppError } from "@utils/AppError";
+import { useState } from "react";
+import { api } from "@services/api";
+
+type FormData = {
+  email: string;
+  password: string;
+};
 
 export function SignIn() {
+  const [isLoading, setIsLoading] = useState(false);
+  const navigation = useNavigation<AuthNavigatorRoutesProps>();
+
+  const toast = useToast();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({});
+
+  async function handleSignIn({ email, password }: FormData) {
+    try {
+      setIsLoading(true);
+      const teste = await api.post("/sessions", { email, password });
+
+      console.log(teste.data);
+      setIsLoading(false);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+
+      const title = isAppError
+        ? error.message
+        : "Não foi possível entrar. Tente novamente mais tarde.";
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <VStack flex={1} px={10} pt={24} bg="gray.200">
+    <VStack flex={1} px={10} pt={24}>
       <Center>
         <Image source={LogoImg} alt="Logotipo" />
 
-        <Heading
+        <Text
           fontSize={40}
           fontFamily="heading"
           fontWeight="bold"
           color="gray.700"
         >
           marketspace
-        </Heading>
+        </Text>
         <Text fontSize="md" color="gray.700">
           Seu espaço de compra e venda
         </Text>
@@ -28,18 +75,55 @@ export function SignIn() {
           Acesse sua conta
         </Text>
 
-        <Input placeholder="E-mail" />
+        <Controller
+          name="email"
+          control={control}
+          rules={{ required: "Informe o e-mail." }}
+          render={({ field: { value, onChange } }) => (
+            <Input
+              placeholder="E-mail"
+              value={value}
+              autoCapitalize="none"
+              onChangeText={onChange}
+              errorMessage={errors.email?.message}
+            />
+          )}
+        />
 
-        <Input placeholder="Senha" />
+        <Controller
+          name="password"
+          control={control}
+          rules={{ required: "Informe a senha." }}
+          render={({ field: { value, onChange } }) => (
+            <Input
+              placeholder="Senha"
+              isPassword
+              value={value}
+              onChangeText={onChange}
+              errorMessage={errors.password?.message}
+            />
+          )}
+        />
 
-        <Button title="Entrar" />
+        <Button
+          title="Entrar"
+          w="full"
+          onPress={handleSubmit(handleSignIn)}
+          isLoading={isLoading}
+        />
       </Center>
 
       <Center mt={24}>
         <Text color="gray.600" fontSize="md" mb={4} fontFamily="body">
           Ainda não tem acesso?
         </Text>
-        <Button title="Criar conta" variant="light" />
+
+        <Button
+          title="Criar conta"
+          variant="light"
+          onPress={() => navigation.navigate("signUp")}
+          w="full"
+        />
       </Center>
     </VStack>
   );
