@@ -17,8 +17,6 @@ export function HomeHeader() {
 
   const { user } = useAuth();
 
-  console.log(user);
-
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   return (
