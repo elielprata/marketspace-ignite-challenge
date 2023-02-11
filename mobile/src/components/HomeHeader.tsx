@@ -4,24 +4,40 @@ import { Plus } from "phosphor-react-native";
 
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
+import { useAuth } from "@hooks/useAuth";
+
 import AvatarImg from "@assets/avatar.png";
 
 import { UserPhoto } from "./UserPhoto";
 import { Button } from "./Button";
+import { api } from "@services/api";
 
 export function HomeHeader() {
   const { colors, sizes } = useTheme();
+
+  const { user } = useAuth();
+
+  console.log(user);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   return (
     <HStack mb={4}>
-      <UserPhoto source={AvatarImg} size={45} alt="Imagem do usuário" mr={2} />
+      <UserPhoto
+        source={
+          user.avatar
+            ? { uri: `${api.defaults.baseURL}/images/${user.avatar}` }
+            : AvatarImg
+        }
+        size={45}
+        alt="Imagem do usuário"
+        mr={2}
+      />
 
       <VStack justifyContent="center" flex={1}>
         <Text fontSize="md">Boas vindas,</Text>
         <Heading fontFamily="heading" fontSize="md">
-          João
+          {user.name}
         </Heading>
       </VStack>
 
