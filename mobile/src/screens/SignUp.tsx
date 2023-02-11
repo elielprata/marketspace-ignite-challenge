@@ -262,6 +262,8 @@ export function SignUp() {
                 isPassword
                 value={value}
                 onChangeText={onChange}
+                onSubmitEditing={handleSubmit(handleSignUp)}
+                returnKeyType="send"
                 errorMessage={errors.password_confirm?.message}
               />
             )}
