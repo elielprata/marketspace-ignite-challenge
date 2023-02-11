@@ -1,10 +1,12 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 
 import { UserDTO } from "@dtos/UserDTO";
 import { api } from "@services/api";
+import { storageUserGet, storageUserSave } from "@storage/storageUser";
 
 export type AuthContextDataProps = {
   user: UserDTO;
+  isLoadingUserData: boolean;
   signIn: (email: string, password: string) => void;
 };
 
@@ -17,6 +19,7 @@ export const AuthContext = createContext<AuthContextDataProps>(
 );
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
+  const [isLoadingUserData, setIsLoadingUserData] = useState(true);
   const [user, setUser] = useState<UserDTO>({} as UserDTO);
 
   async function signIn(email: string, password: string) {
@@ -25,14 +28,28 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
       if (data.user) {
         setUser(data.user);
+        storageUserSave(data.user);
       }
     } catch (error) {
       throw error;
     }
   }
 
+  async function loadUserData() {
+    const userLogged = await storageUserGet();
+    if (userLogged) {
+      setUser(userLogged);
+    }
+
+    setIsLoadingUserData(false);
+  }
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, signIn }}>
+    <AuthContext.Provider value={{ user, isLoadingUserData, signIn }}>
       {children}
     </AuthContext.Provider>
   );
