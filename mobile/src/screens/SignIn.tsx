@@ -1,6 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { Center, Image, Text, useToast, VStack } from "native-base";
+import { Center, Image, ScrollView, Text, useToast, VStack } from "native-base";
 
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 
@@ -10,7 +10,7 @@ import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { AppError } from "@utils/AppError";
 import { useState } from "react";
-import { api } from "@services/api";
+import { useAuth } from "@hooks/useAuth";
 
 type FormData = {
   email: string;
@@ -22,6 +22,7 @@ export function SignIn() {
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
   const toast = useToast();
+  const { signIn } = useAuth();
 
   const {
     control,
@@ -32,10 +33,7 @@ export function SignIn() {
   async function handleSignIn({ email, password }: FormData) {
     try {
       setIsLoading(true);
-      const teste = await api.post("/sessions", { email, password });
-
-      console.log(teste.data);
-      setIsLoading(false);
+      await signIn(email.trim(), password);
     } catch (error) {
       const isAppError = error instanceof AppError;
 
@@ -53,7 +51,7 @@ export function SignIn() {
   }
 
   return (
-    <VStack flex={1} px={10} pt={24}>
+    <ScrollView flex={1} px={10} pt={24} showsVerticalScrollIndicator={false}>
       <Center>
         <Image source={LogoImg} alt="Logotipo" />
 
@@ -100,6 +98,8 @@ export function SignIn() {
               isPassword
               value={value}
               onChangeText={onChange}
+              onSubmitEditing={handleSubmit(handleSignIn)}
+              returnKeyType="send"
               errorMessage={errors.password?.message}
             />
           )}
@@ -125,6 +125,6 @@ export function SignIn() {
           w="full"
         />
       </Center>
-    </VStack>
+    </ScrollView>
   );
 }
