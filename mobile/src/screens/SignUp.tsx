@@ -147,7 +147,7 @@ export function SignUp() {
   }
 
   return (
-    <VStack flex={1} px={10} pt={20} bg="gray.200">
+    <VStack flex={1} px={10} pt={20}>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 50 }}
         showsVerticalScrollIndicator={false}
