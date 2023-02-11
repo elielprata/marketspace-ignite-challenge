@@ -27,6 +27,7 @@ import AvatarImg from "@assets/avatar.png";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { UserPhoto } from "@components/UserPhoto";
+import { useAuth } from "@hooks/useAuth";
 
 type FormDataProps = {
   name: string;
@@ -56,6 +57,7 @@ export function SignUp() {
 
   const { colors, sizes } = useTheme();
   const toast = useToast();
+  const { signIn } = useAuth();
 
   const navigation = useNavigation();
 
@@ -134,6 +136,8 @@ export function SignUp() {
       await api.post("/users", uploadForm, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
+      await signIn(email, password);
     } catch (error) {
       const isAppError = error instanceof AppError;
       const title = isAppError
