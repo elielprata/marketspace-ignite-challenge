@@ -19,7 +19,7 @@ type AppRoutes = {
   advertDetails: undefined;
   createAdvert: undefined;
   advertPreview: {
-    previewData: ProductDTO;
+    productData: ProductDTO;
     images: ProductImagesDTO[];
   };
 };
