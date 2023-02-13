@@ -7,6 +7,9 @@ import { useTheme } from "native-base";
 
 import { HomeTabs } from "./home.routes";
 
+import { ProductDTO } from "@dtos/ProductDTO";
+import { ProductImagesDTO } from "@dtos/ProductImagesDTO";
+
 import { AdvertDetails } from "@screens/AdvertDetails";
 import { CreateAdvert } from "@screens/CreateAdvert";
 import { AdvertPreview } from "@screens/AdvertPreview";
@@ -15,7 +18,10 @@ type AppRoutes = {
   home: undefined;
   advertDetails: undefined;
   createAdvert: undefined;
-  advertPreview: undefined;
+  advertPreview: {
+    previewData: ProductDTO;
+    images: ProductImagesDTO[];
+  };
 };
 
 export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>;
