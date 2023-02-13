@@ -3,8 +3,6 @@ import {
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 
-import { useTheme } from "native-base";
-
 import { HomeTabs } from "./home.routes";
 
 import { ProductDTO } from "@dtos/ProductDTO";
@@ -16,7 +14,7 @@ import { AdvertPreview } from "@screens/AdvertPreview";
 
 type AppRoutes = {
   home: undefined;
-  advertDetails: undefined;
+  advertDetails: { productId: string };
   createAdvert: undefined;
   advertPreview: {
     productData: ProductDTO;
@@ -29,10 +27,6 @@ export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>;
 const { Navigator, Screen } = createNativeStackNavigator<AppRoutes>();
 
 export function AppRoutes() {
-  const { sizes, colors } = useTheme();
-
-  const IconSize = sizes[6];
-
   return (
     <Navigator
       screenOptions={{
