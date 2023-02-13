@@ -1,3 +1,4 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   Center,
   HStack,
@@ -5,27 +6,66 @@ import {
   ScrollView,
   Text,
   useTheme,
+  useToast,
   VStack,
 } from "native-base";
-import {
-  ArrowLeft,
-  Bank,
-  Barcode,
-  CreditCard,
-  Money,
-  QrCode,
-  Tag,
-  WhatsappLogo,
-} from "phosphor-react-native";
+import { ArrowLeft, Tag } from "phosphor-react-native";
+import Carousel from "react-native-reanimated-carousel";
+
+import { api } from "@services/api";
+import { AppError } from "@utils/AppError";
+
+import { useAuth } from "@hooks/useAuth";
+
+import { ProductDTO } from "@dtos/ProductDTO";
+import { ProductImagesDTO } from "@dtos/ProductImagesDTO";
 
 import AvatarImg from "@assets/avatar.png";
 import ProductImg from "@assets/product.png";
 
 import { UserPhoto } from "@components/UserPhoto";
 import { Button } from "@components/Button";
+import { PaymentMethods } from "@components/PaymentMethods";
+import { CarouselProducts } from "@components/CarouselProducts";
+
+type RouteParamsProps = {
+  productData: ProductDTO;
+  images: ProductImagesDTO[];
+};
 
 export function AdvertPreview() {
   const { colors, sizes } = useTheme();
+
+  const toast = useToast();
+  const { user } = useAuth();
+  const route = useRoute();
+  const navigation = useNavigation();
+
+  const { productData, images } = route.params as RouteParamsProps;
+
+  async function handleAddProduct() {
+    try {
+      const product = (await api.post("/products", productData)) as ProductDTO;
+
+      const uploadForm = new FormData();
+      uploadForm.append("product_id", product.id as string);
+
+      images.forEach((image) => {
+        uploadForm.append("images", image as any);
+      });
+
+      await api.post("/products/images", uploadForm, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível criar a conta. Tente novamente mais tarde.";
+
+      toast.show({ title, placement: "top", bgColor: "red.500" });
+    }
+  }
 
   return (
     <VStack flex={1} bg="blue.400" pt={12}>
@@ -38,19 +78,23 @@ export function AdvertPreview() {
         </Text>
       </Center>
 
-      <ScrollView _contentContainerStyle={{ pb: 50 }} bg="gray.200">
-        <Image source={ProductImg} alt="Imagem do produto" />
+      <ScrollView _contentContainerStyle={{ pb: 10 }} bg="gray.200">
+        <CarouselProducts images={images} />
 
         <VStack px={6} mt={5} justifyContent="flex-start">
           <HStack alignItems="center" mb={6}>
             <UserPhoto
               size={6}
-              source={AvatarImg}
+              source={
+                user.avatar
+                  ? { uri: `${api.defaults.baseURL}/images/${user.avatar}` }
+                  : AvatarImg
+              }
               mr={2}
               alt="Imagem do usuário"
             />
             <Text fontSize="sm" color="gray.700">
-              Maria Oliveira
+              {user.name}
             </Text>
           </HStack>
 
@@ -62,25 +106,25 @@ export function AdvertPreview() {
               color="gray.600"
               fontSize="xs"
             >
-              NOVO
+              {productData.is_new ? "NOVO" : "USADO"}
             </Text>
           </HStack>
 
           <HStack justifyContent="space-between" mb={2}>
             <Text color="gray.700" fontFamily="heading" fontSize="lg">
-              Bicicleta
+              {productData.name}
             </Text>
 
             <Text fontSize="lg" fontFamily="heading" color="blue.400">
-              <Text fontSize="sm">R$</Text> 120,00
+              <Text fontSize="sm">R$</Text>{" "}
+              {productData.price
+                .toString()
+                .replace(/(\d{3})(\d{3})(\d{2})$/g, ".$1.$2,$3")}
             </Text>
           </HStack>
 
           <Text fontSize="sm" mb={6}>
-            Cras congue cursus in tortor sagittis placerat nunc, tellus arcu.
-            Vitae ante leo eget maecenas urna mattis cursus. Mauris metus amet
-            nibh mauris mauris accumsan, euismod. Aenean leo nunc, purus iaculis
-            in aliquam.
+            {productData.description}
           </Text>
 
           <HStack mb={4}>
@@ -88,25 +132,16 @@ export function AdvertPreview() {
               Aceita troca?
             </Text>
 
-            <Text fontSize="sm">Sim</Text>
+            <Text fontSize="sm">
+              {productData.accept_trade ? "Sim" : "Não"}
+            </Text>
           </HStack>
 
           <Text fontSize="sm" fontFamily="heading" mb={2}>
             Meios de pagamento:
           </Text>
 
-          <VStack>
-            <Barcode />
-            <QrCode />
-            <Money />
-            <CreditCard />
-            <Bank />
-            <Text>Boleto</Text>
-            <Text>Pix</Text>
-            <Text>Dinheiro</Text>
-            <Text>Cartão de Crédito</Text>
-            <Text>Depósito Bancário</Text>
-          </VStack>
+          <PaymentMethods paymentMethods={productData.payment_methods} />
         </VStack>
       </ScrollView>
 
@@ -117,11 +152,17 @@ export function AdvertPreview() {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Button title="Voltar e editar" variant="light" mr={3} flex={1}>
+        <Button
+          title="Voltar e editar"
+          variant="light"
+          mr={3}
+          flex={1}
+          onPress={() => navigation.goBack()}
+        >
           <ArrowLeft color={colors.gray[600]} size={sizes[4]} />
         </Button>
 
-        <Button title="Publicar" flex={1} onPress={() => {}}>
+        <Button title="Publicar" flex={1} onPress={handleAddProduct}>
           <Tag color={colors.gray[200]} size={sizes[4]} />
         </Button>
       </HStack>
