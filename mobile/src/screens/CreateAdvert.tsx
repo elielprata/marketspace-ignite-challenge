@@ -113,7 +113,7 @@ export function CreateAdvert() {
     );
   }
 
-  async function addProducts(data: FormDataProps) {
+  async function previewProducts(data: FormDataProps) {
     if (productPhotos.length === 0) {
       return toast.show({
         title: "Adicione uma foto para o produto",
@@ -331,7 +331,7 @@ export function CreateAdvert() {
           title="Avançar"
           variant="dark"
           flex={1}
-          onPress={handleSubmit(addProducts)}
+          onPress={handleSubmit(previewProducts)}
         />
       </HStack>
     </VStack>
