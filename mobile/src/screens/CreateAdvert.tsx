@@ -37,7 +37,7 @@ export type FormDataProps = {
   name: string;
   description: string;
   is_new: string;
-  price: string;
+  price: number;
   accept_trade: boolean;
   payment_methods: string[];
 };
@@ -123,7 +123,10 @@ export function CreateAdvert() {
     }
 
     navigation.navigate("advertPreview", {
-      previewData: { ...data, is_new: data.is_new === "new" ? true : false },
+      productData: {
+        ...data,
+        is_new: data.is_new === "new" ? true : false,
+      },
       images: productPhotos,
     });
   }
@@ -260,7 +263,7 @@ export function CreateAdvert() {
               <Input
                 placeholder="Valor do produto"
                 //value={value}
-                onChangeText={onChange}
+                onChangeText={(value) => onChange(parseInt(value) * 100)}
                 errorMessage={errors.price?.message}
               />
             )}
