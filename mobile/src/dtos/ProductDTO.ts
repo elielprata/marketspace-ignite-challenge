@@ -1,5 +1,5 @@
 export type ProductDTO = {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   is_new: boolean;
