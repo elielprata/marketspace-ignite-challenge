@@ -3,7 +3,7 @@ export type ProductDTO = {
   name: string;
   description: string;
   is_new: boolean;
-  price: string;
+  price: number;
   accept_trade: boolean;
   payment_methods: string[];
 };
