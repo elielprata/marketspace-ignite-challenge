@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   Center,
   HStack,
-  Image,
   ScrollView,
   Text,
   useTheme,
@@ -10,7 +10,6 @@ import {
   VStack,
 } from "native-base";
 import { ArrowLeft, Tag } from "phosphor-react-native";
-import Carousel from "react-native-reanimated-carousel";
 
 import { api } from "@services/api";
 import { AppError } from "@utils/AppError";
@@ -21,12 +20,12 @@ import { ProductDTO } from "@dtos/ProductDTO";
 import { ProductImagesDTO } from "@dtos/ProductImagesDTO";
 
 import AvatarImg from "@assets/avatar.png";
-import ProductImg from "@assets/product.png";
 
 import { UserPhoto } from "@components/UserPhoto";
 import { Button } from "@components/Button";
 import { PaymentMethods } from "@components/PaymentMethods";
 import { CarouselProducts } from "@components/CarouselProducts";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 type RouteParamsProps = {
   productData: ProductDTO;
@@ -34,21 +33,24 @@ type RouteParamsProps = {
 };
 
 export function AdvertPreview() {
+  const [isLoading, setIsLoading] = useState(false);
   const { colors, sizes } = useTheme();
 
   const toast = useToast();
   const { user } = useAuth();
   const route = useRoute();
-  const navigation = useNavigation();
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const { productData, images } = route.params as RouteParamsProps;
 
   async function handleAddProduct() {
     try {
-      const product = (await api.post("/products", productData)) as ProductDTO;
+      setIsLoading(true);
+
+      const product = (await api.post("/products", productData)) as any;
 
       const uploadForm = new FormData();
-      uploadForm.append("product_id", product.id as string);
+      uploadForm.append("product_id", product.data?.id as string);
 
       images.forEach((image) => {
         uploadForm.append("images", image as any);
@@ -57,6 +59,8 @@ export function AdvertPreview() {
       await api.post("/products/images", uploadForm, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
+      navigation.navigate("advertDetails", { productId: product.data?.id });
     } catch (error) {
       const isAppError = error instanceof AppError;
       const title = isAppError
@@ -64,6 +68,8 @@ export function AdvertPreview() {
         : "Não foi possível criar a conta. Tente novamente mais tarde.";
 
       toast.show({ title, placement: "top", bgColor: "red.500" });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -162,7 +168,12 @@ export function AdvertPreview() {
           <ArrowLeft color={colors.gray[600]} size={sizes[4]} />
         </Button>
 
-        <Button title="Publicar" flex={1} onPress={handleAddProduct}>
+        <Button
+          title="Publicar"
+          flex={1}
+          onPress={handleAddProduct}
+          isLoading={isLoading}
+        >
           <Tag color={colors.gray[200]} size={sizes[4]} />
         </Button>
       </HStack>
