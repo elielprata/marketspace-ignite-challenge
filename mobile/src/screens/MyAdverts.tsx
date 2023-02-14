@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, HStack, Select, Text, useTheme, VStack } from "native-base";
 import { CaretDown, CaretUp } from "phosphor-react-native";
 
+import { api } from "@services/api";
+
+import { ProductDTO } from "@dtos/ProductDTO";
+
 import { AdvertCard } from "@components/AdvertCard";
 import { Header } from "@components/Header";
+import { useAuth } from "@hooks/useAuth";
 
 export function MyAdverts() {
-  const [adverts, setAdverts] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const [adverts, setAdverts] = useState<ProductDTO[]>([]);
 
   const { colors, sizes } = useTheme();
+  const { user } = useAuth();
+
+  async function fetchProducts() {
+    const response = await api.get("/users/products");
+
+    setAdverts(response.data);
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   return (
     <VStack flex={1} bg="gray.200" px={6} pt={16}>
@@ -52,8 +68,10 @@ export function MyAdverts() {
 
       <FlatList
         data={adverts}
-        keyExtractor={(item: number) => `${item}`}
-        renderItem={() => <AdvertCard condition="new" />}
+        keyExtractor={(item, index) => `${index}`}
+        renderItem={({ item }) => (
+          <AdvertCard data={item} userPhoto={user.avatar} />
+        )}
         flex={1}
         showsVerticalScrollIndicator={false}
         numColumns={2}
