@@ -13,7 +13,6 @@ type Props = {
 
 export function PaymentMethods({ paymentMethods = [] }: Props) {
   const { colors, sizes } = useTheme();
-  console.log(paymentMethods.includes("cash"));
 
   return (
     <VStack>
