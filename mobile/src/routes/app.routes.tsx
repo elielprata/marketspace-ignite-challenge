@@ -19,7 +19,14 @@ type AppRoutes = {
   };
   createAdvert: undefined;
   advertPreview: {
-    productData: ProductDTO;
+    productData: {
+      name: string;
+      description: string;
+      is_new: boolean;
+      price: number;
+      accept_trade: boolean;
+      payment_methods: string[];
+    };
     images: ProductImagesDTO[];
   };
 };
