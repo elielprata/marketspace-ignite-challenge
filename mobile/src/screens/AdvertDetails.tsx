@@ -1,58 +1,94 @@
-import { HStack, Image, ScrollView, Text, useTheme, VStack } from "native-base";
+import { useEffect, useState } from "react";
+import { useRoute } from "@react-navigation/native";
 import {
-  Bank,
-  Barcode,
-  CreditCard,
-  Money,
-  QrCode,
-  WhatsappLogo,
-} from "phosphor-react-native";
+  HStack,
+  ScrollView,
+  Text,
+  useTheme,
+  useToast,
+  VStack,
+} from "native-base";
+import { Power, Trash, WhatsappLogo } from "phosphor-react-native";
 
 import AvatarImg from "@assets/avatar.png";
-import ProductImg from "@assets/product.png";
+
+import { api } from "@services/api";
+import { AppError } from "@utils/AppError";
+import { ProductDTO } from "@dtos/ProductDTO";
 
 import { Header } from "@components/Header";
 import { UserPhoto } from "@components/UserPhoto";
 import { Button } from "@components/Button";
-import { api } from "@services/api";
-import { useRoute } from "@react-navigation/native";
-import { useEffect, useState } from "react";
 import { PaymentMethods } from "@components/PaymentMethods";
+import { CarouselProducts } from "@components/CarouselProducts";
+import { Loading } from "@components/Loading";
+import { useAuth } from "@hooks/useAuth";
+import { Linking } from "react-native";
+import { Currency } from "@utils/FormatText";
 
 type RouteParamsProps = {
   productId: string;
 };
 
 export function AdvertDetails() {
-  const [product, setProduct] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [product, setProduct] = useState<ProductDTO>({} as ProductDTO);
   const { colors, sizes } = useTheme();
 
+  const toast = useToast();
   const route = useRoute();
+  const { user } = useAuth();
   const { productId } = route.params as RouteParamsProps;
 
   async function fetchProduct() {
-    const response = await api.get(`/products/${productId}`);
+    try {
+      setIsLoading(true);
+      const response = await api.get(`/products/${productId}`);
 
-    setProduct(response.data);
+      setProduct(response.data);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível carregar os produtos";
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleOpenWhatsApp(tel: string) {
+    await Linking.openURL(`whatsapp://send?phone=${tel}`);
   }
 
   useEffect(() => {
     fetchProduct();
-  }, []);
+  }, [productId]);
 
-  return (
+  return isLoading ? (
+    <Loading />
+  ) : (
     <VStack flex={1} bg="gray.200" pt={12}>
       <ScrollView _contentContainerStyle={{ pb: 50 }}>
-        <Header title="" px={6} mb={3} />
+        {product.user_id === user.id ? (
+          <Header title="" px={6} mb={3} rightIcon="pencil" />
+        ) : (
+          <Header title="" px={6} mb={3} />
+        )}
 
-        <Image source={ProductImg} alt="Imagem do produto" />
+        <CarouselProducts images={product.product_images} />
 
         <VStack px={6} mt={5} justifyContent="flex-start">
           <HStack alignItems="center" mb={6}>
             <UserPhoto
               size={6}
               source={
-                product.user.avatar
+                product.user?.avatar
                   ? {
                       uri: `${api.defaults.baseURL}/images/${product.user.avatar}`,
                     }
@@ -62,7 +98,7 @@ export function AdvertDetails() {
               alt="Imagem do usuário"
             />
             <Text fontSize="sm" color="gray.700">
-              {product.user.name}
+              {product.user?.name}
             </Text>
           </HStack>
 
@@ -84,7 +120,7 @@ export function AdvertDetails() {
             </Text>
 
             <Text fontSize="lg" fontFamily="heading" color="blue.400">
-              <Text fontSize="sm">R$</Text> {product.price}
+              <Text fontSize="sm">R$</Text> {Currency(product.price)}
             </Text>
           </HStack>
 
@@ -108,25 +144,51 @@ export function AdvertDetails() {
         </VStack>
       </ScrollView>
 
-      <HStack
-        bg="gray.100"
-        px={6}
-        py={5}
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Text fontSize="lg" fontFamily="heading" color="blue.700">
-          <Text fontSize="sm">R$</Text> {product.price}
-        </Text>
+      {product.user_id === user.id ? (
+        <VStack
+          bg="gray.100"
+          px={6}
+          py={5}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Button title="Desativar anúncio" variant="dark" w="full" mb={2}>
+            <Power color={colors.gray[600]} size={sizes[4]} />
+          </Button>
 
-        <Button title="Entrar em contato" onPress={() => {}}>
-          <WhatsappLogo
-            color={colors.gray[200]}
-            size={sizes[3]}
-            weight="fill"
-          />
-        </Button>
-      </HStack>
+          <Button
+            title="Excluir anúncio"
+            variant="light"
+            w="full"
+            onPress={() => {}}
+          >
+            <Trash color={colors.gray[200]} size={sizes[4]} />
+          </Button>
+        </VStack>
+      ) : (
+        <HStack
+          bg="gray.100"
+          px={6}
+          py={5}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Text fontSize="lg" fontFamily="heading" color="blue.700">
+            <Text fontSize="sm">R$</Text> {Currency(product.price)}
+          </Text>
+
+          <Button
+            title="Entrar em contato"
+            onPress={() => handleOpenWhatsApp(product.user.tel)}
+          >
+            <WhatsappLogo
+              color={colors.gray[200]}
+              size={sizes[3]}
+              weight="fill"
+            />
+          </Button>
+        </HStack>
+      )}
     </VStack>
   );
 }
