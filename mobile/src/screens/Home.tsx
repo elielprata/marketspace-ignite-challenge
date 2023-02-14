@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FlatList,
   Heading,
@@ -13,21 +13,23 @@ import { ArrowRight, Tag } from "phosphor-react-native";
 import { api } from "@services/api";
 import { AppError } from "@utils/AppError";
 
-import { useNavigation } from "@react-navigation/native";
-import { HomeNavigatorRoutesProps } from "@routes/home.routes";
+import { ProductDTO } from "@dtos/ProductDTO";
+
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 import { HomeHeader } from "@components/HomeHeader";
 import { SearchInput } from "@components/SearchInput";
 import { AdvertCard } from "@components/AdvertCard";
-import { ProductDTO } from "@dtos/ProductDTO";
 
 export function Home() {
-  const [products, setProducts] = useState<{}[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState<ProductDTO[]>([]);
 
   const toast = useToast();
 
   const { colors, sizes } = useTheme();
-  const navigation = useNavigation<HomeNavigatorRoutesProps>();
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   function handleOpenAdvertDetails(productId: string) {
     navigation.navigate("advertDetails", { productId });
@@ -35,9 +37,10 @@ export function Home() {
 
   async function fetchProducts() {
     try {
+      setIsLoading(true);
       const response = await api.get("/products");
 
-      setProducts(response.data as ProductDTO[]);
+      setProducts(response.data);
     } catch (error) {
       const isAppError = error instanceof AppError;
       const title = isAppError
@@ -49,18 +52,22 @@ export function Home() {
         placement: "top",
         bgColor: "red.500",
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts();
+    }, [])
+  );
 
   return (
     <VStack flex={1} bg="gray.200" px={6} pt={16}>
       <FlatList
         data={products}
-        keyExtractor={(item: number) => `${item}`}
+        keyExtractor={(item) => item.id}
         ListHeaderComponent={() => (
           <>
             <HomeHeader />

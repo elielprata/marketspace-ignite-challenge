@@ -14,7 +14,9 @@ import { AdvertPreview } from "@screens/AdvertPreview";
 
 type AppRoutes = {
   home: undefined;
-  advertDetails: { productId: string };
+  advertDetails: {
+    productId: string;
+  };
   createAdvert: undefined;
   advertPreview: {
     productData: ProductDTO;
