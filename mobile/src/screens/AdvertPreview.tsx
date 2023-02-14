@@ -28,7 +28,14 @@ import { CarouselProducts } from "@components/CarouselProducts";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 type RouteParamsProps = {
-  productData: ProductDTO;
+  productData: {
+    name: string;
+    description: string;
+    is_new: string;
+    price: number;
+    accept_trade: boolean;
+    payment_methods: string[];
+  };
   images: ProductImagesDTO[];
 };
 
@@ -47,10 +54,10 @@ export function AdvertPreview() {
     try {
       setIsLoading(true);
 
-      const product = (await api.post("/products", productData)) as any;
+      const product = await api.post("/products", productData);
 
       const uploadForm = new FormData();
-      uploadForm.append("product_id", product.data?.id as string);
+      uploadForm.append("product_id", product.data?.id);
 
       images.forEach((image) => {
         uploadForm.append("images", image as any);
@@ -85,7 +92,7 @@ export function AdvertPreview() {
       </Center>
 
       <ScrollView _contentContainerStyle={{ pb: 10 }} bg="gray.200">
-        <CarouselProducts images={images} />
+        <CarouselProducts images={images} preview />
 
         <VStack px={6} mt={5} justifyContent="flex-start">
           <HStack alignItems="center" mb={6}>
