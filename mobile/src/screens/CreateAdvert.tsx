@@ -96,6 +96,8 @@ export function CreateAdvert() {
         setProductPhotos((prevState) => [
           ...prevState,
           {
+            id: "",
+            path: photoSelected.assets[0].uri,
             name: `${user.id}_productPhoto.${fileExtension}`.toLowerCase(),
             uri: photoSelected.assets[0].uri,
             type: `${photoSelected.assets[0].type}/${fileExtension}`,
