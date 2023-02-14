@@ -8,7 +8,10 @@ import {
 } from "phosphor-react-native";
 
 type Props = {
-  paymentMethods: string[];
+  paymentMethods: {
+    key: string;
+    name: string;
+  }[];
 };
 
 export function PaymentMethods({ paymentMethods = [] }: Props) {
@@ -16,50 +19,28 @@ export function PaymentMethods({ paymentMethods = [] }: Props) {
 
   return (
     <VStack>
-      {paymentMethods.includes("boleto") && (
+      {paymentMethods.map(({ key, name }) => (
         <HStack alignItems="center">
-          <Barcode color={colors.gray[600]} size={sizes[6]} />
-          <Text color="gray.600" ml={2}>
-            Boleto
-          </Text>
-        </HStack>
-      )}
+          {key === "boleto" && (
+            <Barcode color={colors.gray[600]} size={sizes[6]} />
+          )}
 
-      {paymentMethods.includes("pix") && (
-        <HStack>
-          <QrCode color={colors.gray[600]} size={sizes[6]} />
-          <Text color="gray.600" ml={2}>
-            Pix
-          </Text>
-        </HStack>
-      )}
+          {key === "pix" && <QrCode color={colors.gray[600]} size={sizes[6]} />}
 
-      {paymentMethods.includes("cash") && (
-        <HStack>
-          <Money color={colors.gray[600]} size={sizes[6]} />
-          <Text color="gray.600" ml={2}>
-            Dinheiro
-          </Text>
-        </HStack>
-      )}
+          {key === "cash" && <Money color={colors.gray[600]} size={sizes[6]} />}
 
-      {paymentMethods.includes("card") && (
-        <HStack>
-          <CreditCard color={colors.gray[600]} size={sizes[6]} />
-          <Text color="gray.600" ml={2}>
-            Cartão de Crédito
-          </Text>
-        </HStack>
-      )}
+          {key === "card" && (
+            <CreditCard color={colors.gray[600]} size={sizes[6]} />
+          )}
 
-      {paymentMethods.includes("card") && (
-        <HStack>
-          <Bank color={colors.gray[600]} size={sizes[6]} />
+          {key === "deposit" && (
+            <Bank color={colors.gray[600]} size={sizes[6]} />
+          )}
           <Text color="gray.600" ml={2}>
-            Depósito Bancário
+            {name}
           </Text>
         </HStack>
-      )}
+      ))}
     </VStack>
   );
 }
