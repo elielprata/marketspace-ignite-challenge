@@ -14,9 +14,31 @@ import ProductImg from "@assets/product.png";
 import { Header } from "@components/Header";
 import { UserPhoto } from "@components/UserPhoto";
 import { Button } from "@components/Button";
+import { api } from "@services/api";
+import { useRoute } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { PaymentMethods } from "@components/PaymentMethods";
+
+type RouteParamsProps = {
+  productId: string;
+};
 
 export function AdvertDetails() {
+  const [product, setProduct] = useState();
   const { colors, sizes } = useTheme();
+
+  const route = useRoute();
+  const { productId } = route.params as RouteParamsProps;
+
+  async function fetchProduct() {
+    const response = await api.get(`/products/${productId}`);
+
+    setProduct(response.data);
+  }
+
+  useEffect(() => {
+    fetchProduct();
+  }, []);
 
   return (
     <VStack flex={1} bg="gray.200" pt={12}>
@@ -29,12 +51,18 @@ export function AdvertDetails() {
           <HStack alignItems="center" mb={6}>
             <UserPhoto
               size={6}
-              source={AvatarImg}
+              source={
+                product.user.avatar
+                  ? {
+                      uri: `${api.defaults.baseURL}/images/${product.user.avatar}`,
+                    }
+                  : AvatarImg
+              }
               mr={2}
               alt="Imagem do usuário"
             />
             <Text fontSize="sm" color="gray.700">
-              Maria Oliveira
+              {product.user.name}
             </Text>
           </HStack>
 
@@ -46,25 +74,22 @@ export function AdvertDetails() {
               color="gray.600"
               fontSize="xs"
             >
-              NOVO
+              {product.is_new ? "NOVO" : "USADO"}
             </Text>
           </HStack>
 
           <HStack justifyContent="space-between" mb={2}>
             <Text color="gray.700" fontFamily="heading" fontSize="lg">
-              Bicicleta
+              {product.name}
             </Text>
 
             <Text fontSize="lg" fontFamily="heading" color="blue.400">
-              <Text fontSize="sm">R$</Text> 120,00
+              <Text fontSize="sm">R$</Text> {product.price}
             </Text>
           </HStack>
 
           <Text fontSize="sm" mb={6}>
-            Cras congue cursus in tortor sagittis placerat nunc, tellus arcu.
-            Vitae ante leo eget maecenas urna mattis cursus. Mauris metus amet
-            nibh mauris mauris accumsan, euismod. Aenean leo nunc, purus iaculis
-            in aliquam.
+            {product.description}
           </Text>
 
           <HStack mb={4}>
@@ -72,25 +97,14 @@ export function AdvertDetails() {
               Aceita troca?
             </Text>
 
-            <Text fontSize="sm">Sim</Text>
+            <Text fontSize="sm">{product.accept_trade ? "SIM" : "NÃO"}</Text>
           </HStack>
 
           <Text fontSize="sm" fontFamily="heading" mb={2}>
             Meios de pagamento:
           </Text>
 
-          <VStack>
-            <Barcode />
-            <QrCode />
-            <Money />
-            <CreditCard />
-            <Bank />
-            <Text>Boleto</Text>
-            <Text>Pix</Text>
-            <Text>Dinheiro</Text>
-            <Text>Cartão de Crédito</Text>
-            <Text>Depósito Bancário</Text>
-          </VStack>
+          <PaymentMethods paymentMethods={product.payment_methods} />
         </VStack>
       </ScrollView>
 
@@ -102,10 +116,10 @@ export function AdvertDetails() {
         alignItems="center"
       >
         <Text fontSize="lg" fontFamily="heading" color="blue.700">
-          <Text fontSize="sm">R$</Text> 120,00
+          <Text fontSize="sm">R$</Text> {product.price}
         </Text>
 
-        <Button title="Entrar em contato">
+        <Button title="Entrar em contato" onPress={() => {}}>
           <WhatsappLogo
             color={colors.gray[200]}
             size={sizes[3]}
