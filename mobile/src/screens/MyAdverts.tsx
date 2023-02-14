@@ -9,17 +9,22 @@ import { ProductDTO } from "@dtos/ProductDTO";
 import { AdvertCard } from "@components/AdvertCard";
 import { Header } from "@components/Header";
 import { useAuth } from "@hooks/useAuth";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 export function MyAdverts() {
   const [adverts, setAdverts] = useState<ProductDTO[]>([]);
 
   const { colors, sizes } = useTheme();
   const { user } = useAuth();
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   async function fetchProducts() {
-    const response = await api.get("/users/products");
+    try {
+      const response = await api.get("/users/products");
 
-    setAdverts(response.data);
+      setAdverts(response.data);
+    } catch (error) {}
   }
 
   useEffect(() => {
@@ -70,7 +75,13 @@ export function MyAdverts() {
         data={adverts}
         keyExtractor={(item, index) => `${index}`}
         renderItem={({ item }) => (
-          <AdvertCard data={item} userPhoto={user.avatar} />
+          <AdvertCard
+            data={item}
+            userPhoto={user.avatar}
+            onPress={() =>
+              navigation.navigate("advertDetails", { productId: item.id })
+            }
+          />
         )}
         flex={1}
         showsVerticalScrollIndicator={false}
