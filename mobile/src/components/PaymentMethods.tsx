@@ -20,7 +20,7 @@ export function PaymentMethods({ paymentMethods = [] }: Props) {
   return (
     <VStack>
       {paymentMethods.map(({ key, name }) => (
-        <HStack alignItems="center">
+        <HStack alignItems="center" key={key}>
           {key === "boleto" && (
             <Barcode color={colors.gray[600]} size={sizes[6]} />
           )}
