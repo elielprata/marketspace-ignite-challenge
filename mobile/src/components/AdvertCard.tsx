@@ -6,6 +6,7 @@ import AvatarImg from "@assets/avatar.png";
 
 import { UserPhoto } from "./UserPhoto";
 import { api } from "@services/api";
+import { Currency } from "@utils/FormatText";
 
 type Props = TouchableOpacityProps & {
   data: any;
@@ -68,7 +69,7 @@ export function AdvertCard({ data, userPhoto, active = true, ...rest }: Props) {
               fontFamily="body"
               fontWeight={active ? "bold" : "normal"}
             >
-              {data.price}
+              {Currency(data.price)}
             </Text>
           </Text>
         </VStack>
