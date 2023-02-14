@@ -1,4 +1,5 @@
 import { ProductImagesDTO } from "@dtos/ProductImagesDTO";
+import { api } from "@services/api";
 import { Box, HStack, Image } from "native-base";
 import { useState } from "react";
 import { Dimensions } from "react-native";
@@ -6,10 +7,14 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Carousel from "react-native-reanimated-carousel";
 
 type Props = {
-  images: ProductImagesDTO[];
+  images: {
+    id?: string | null;
+    path: string;
+  }[];
+  preview?: boolean;
 };
 
-export function CarouselProducts({ images }: Props) {
+export function CarouselProducts({ images, preview = false }: Props) {
   const [imageIndex, setImageIndex] = useState(0);
   const width = Dimensions.get("window").width;
 
@@ -31,7 +36,11 @@ export function CarouselProducts({ images }: Props) {
               justifyContent: "center",
             }}
             alt="Imagens do produto"
-            source={{ uri: item.uri }}
+            source={
+              preview
+                ? { uri: item.path }
+                : { uri: `${api.defaults.baseURL}/images/${item.path}` }
+            }
           />
         )}
       />
@@ -45,20 +54,23 @@ export function CarouselProducts({ images }: Props) {
         padding={0.5}
       >
         {images.map((item, index) => {
-          return (
-            <Box
-              w="1/2"
-              h={1}
-              bgColor="gray.100:alpha.50"
-              rounded="full"
-              flexShrink={1}
-              mx={0.5}
-            >
-              {imageIndex === index && (
-                <Box h={1} rounded="full" bg="gray.100:alpha.75" />
-              )}
-            </Box>
-          );
+          if (images.length > 1) {
+            return (
+              <Box
+                key={index}
+                w="1/2"
+                h={1}
+                bgColor="gray.100:alpha.50"
+                rounded="full"
+                flexShrink={1}
+                mx={0.5}
+              >
+                {imageIndex === index && (
+                  <Box h={1} rounded="full" bg="gray.100:alpha.75" />
+                )}
+              </Box>
+            );
+          }
         })}
       </HStack>
     </GestureHandlerRootView>
