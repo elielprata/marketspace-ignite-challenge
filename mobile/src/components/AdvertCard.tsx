@@ -5,13 +5,15 @@ import ProductImg from "@assets/product2.png";
 import AvatarImg from "@assets/avatar.png";
 
 import { UserPhoto } from "./UserPhoto";
+import { api } from "@services/api";
 
 type Props = TouchableOpacityProps & {
-  condition: "new" | "used";
+  data: any;
+  userPhoto: string;
   active?: boolean;
 };
 
-export function AdvertCard({ condition, active = true, ...rest }: Props) {
+export function AdvertCard({ data, userPhoto, active = true, ...rest }: Props) {
   return (
     <TouchableOpacity {...rest}>
       <VStack w={150} mb={6}>
@@ -21,13 +23,19 @@ export function AdvertCard({ condition, active = true, ...rest }: Props) {
           w={150}
           resizeMode="cover"
           rounded="lg"
-          source={ProductImg}
+          source={{
+            uri: `${api.defaults.baseURL}/images/${data.product_images[0].path}`,
+          }}
           alt="Imagem do produto"
         />
 
         <UserPhoto
           size={6}
-          source={AvatarImg}
+          source={
+            userPhoto
+              ? { uri: `${api.defaults.baseURL}/images/${userPhoto}` }
+              : AvatarImg
+          }
           alt="Imagem do usuário"
           position="absolute"
           top={1}
@@ -37,18 +45,18 @@ export function AdvertCard({ condition, active = true, ...rest }: Props) {
         <Center
           px={2}
           rounded="full"
-          bg={condition === "new" ? "blue.700" : "gray.600"}
+          bg={data.is_new ? "blue.700" : "gray.600"}
           position="absolute"
           top={1}
           right={1}
         >
           <Text color="white" fontSize="sm">
-            {condition === "new" ? "NOVO" : "USADO"}
+            {data.is_new ? "NOVO" : "USADO"}
           </Text>
         </Center>
 
         <VStack ml={1} mt={1} opacity={!active ? 0.5 : 1}>
-          <Text>Tênis vermelho</Text>
+          <Text>{data.name}</Text>
           <Text
             fontSize="md"
             fontFamily="body"
@@ -60,7 +68,7 @@ export function AdvertCard({ condition, active = true, ...rest }: Props) {
               fontFamily="body"
               fontWeight={active ? "bold" : "normal"}
             >
-              59,90
+              {data.price}
             </Text>
           </Text>
         </VStack>
