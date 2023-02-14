@@ -2,8 +2,10 @@ export type ProductDTO = {
   id: string;
   name: string;
   description: string;
+  is_active: boolean;
   user_id: string;
   user: {
+    tel: string;
     name: string;
     avatar: string;
   };
@@ -14,5 +16,8 @@ export type ProductDTO = {
   is_new: boolean;
   price: number;
   accept_trade: boolean;
-  payment_methods: string[];
+  payment_methods: {
+    key: string;
+    name: string;
+  }[];
 };
