@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { Button, Heading, HStack, useTheme } from "native-base";
 import { IHStackProps } from "native-base/lib/typescript/components/primitives/Stack/HStack";
 import { ArrowLeft, PencilSimpleLine, Plus } from "phosphor-react-native";
@@ -17,7 +18,15 @@ export function Header({
 }: Props) {
   const { colors, sizes } = useTheme();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
+  function handleCreateEditAdvert() {
+    if (rightIcon === "pencil") {
+      navigation.navigate("editAdvert");
+    } else if (rightIcon === "plus") {
+      navigation.navigate("createAdvert");
+    }
+  }
 
   return (
     <HStack justifyContent="space-between" alignItems="center" {...rest}>
@@ -26,7 +35,7 @@ export function Header({
         p={0}
         bg="transparent"
         _pressed={{ bg: "transparent" }}
-        onPress={() => navigation.goBack()}
+        onPress={() => navigation.navigate("home")}
       >
         {goBack && <ArrowLeft color={colors.gray[700]} size={sizes[6]} />}
       </Button>
@@ -41,6 +50,7 @@ export function Header({
         bg="transparent"
         rounded="full"
         _pressed={{ bg: "transparent", opacity: 0.3 }}
+        onPress={handleCreateEditAdvert}
       >
         {rightIcon === "plus" && (
           <Plus color={colors.gray[700]} size={sizes[6]} />
