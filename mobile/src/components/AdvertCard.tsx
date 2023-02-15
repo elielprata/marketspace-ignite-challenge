@@ -1,7 +1,6 @@
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { Box, Center, Image, Text, VStack } from "native-base";
+import { Box, Center, HStack, Image, Text, VStack } from "native-base";
 
-import ProductImg from "@assets/product2.png";
 import AvatarImg from "@assets/avatar.png";
 
 import { UserPhoto } from "./UserPhoto";
@@ -58,20 +57,14 @@ export function AdvertCard({ data, userPhoto, active = true, ...rest }: Props) {
 
         <VStack ml={1} mt={1} opacity={!active ? 0.5 : 1}>
           <Text>{data.name}</Text>
-          <Text
-            fontSize="md"
-            fontFamily="body"
-            fontWeight={active ? "bold" : "normal"}
-          >
-            R${" "}
-            <Text
-              fontSize="xl"
-              fontFamily="body"
-              fontWeight={active ? "bold" : "normal"}
-            >
+          <HStack alignItems="flex-end">
+            <Text fontSize="md" fontFamily={active ? "heading" : "body"} pb={1}>
+              R${" "}
+            </Text>
+            <Text fontSize="xl" fontFamily={active ? "heading" : "body"}>
               {Currency(data.price)}
             </Text>
-          </Text>
+          </HStack>
         </VStack>
 
         {!active && (
