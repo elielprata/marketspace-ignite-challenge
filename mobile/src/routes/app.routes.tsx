@@ -11,6 +11,7 @@ import { ProductImagesDTO } from "@dtos/ProductImagesDTO";
 import { AdvertDetails } from "@screens/AdvertDetails";
 import { CreateAdvert } from "@screens/CreateAdvert";
 import { AdvertPreview } from "@screens/AdvertPreview";
+import { EditAdvert } from "@screens/EditAdvert";
 
 type AppRoutes = {
   home: undefined;
@@ -18,6 +19,7 @@ type AppRoutes = {
     productId: string;
   };
   createAdvert: undefined;
+  editAdvert: undefined;
   advertPreview: {
     productData: {
       name: string;
@@ -47,6 +49,8 @@ export function AppRoutes() {
       <Screen name="advertDetails" component={AdvertDetails} />
 
       <Screen name="createAdvert" component={CreateAdvert} />
+
+      <Screen name="editAdvert" component={EditAdvert} />
 
       <Screen name="advertPreview" component={AdvertPreview} />
     </Navigator>
