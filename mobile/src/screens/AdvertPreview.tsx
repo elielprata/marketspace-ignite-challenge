@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   Center,
@@ -26,6 +26,7 @@ import { Button } from "@components/Button";
 import { PaymentMethods } from "@components/PaymentMethods";
 import { CarouselProducts } from "@components/CarouselProducts";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
+import { Currency } from "@utils/FormatText";
 
 type RouteParamsProps = {
   productData: {
@@ -39,7 +40,15 @@ type RouteParamsProps = {
   images: ProductImagesDTO[];
 };
 
+type PaymentMethodProps = {
+  key: string;
+  name: string;
+};
+
 export function AdvertPreview() {
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodProps[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { colors, sizes } = useTheme();
 
@@ -79,6 +88,33 @@ export function AdvertPreview() {
       setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    productData.payment_methods.map((item) => {
+      let name: string;
+      switch (item) {
+        case "pix":
+          name = "Pix";
+          break;
+        case "cash":
+          name = "Dinheiro";
+          break;
+        case "card":
+          name = "Cartão de crédito";
+          break;
+        case "deposit":
+          name = "Transferência Bancária";
+          break;
+        case "boleto":
+          name = "Boleto";
+          break;
+      }
+      setPaymentMethods((prevState) => [
+        ...prevState,
+        { key: item, name: name },
+      ]);
+    });
+  }, []);
 
   return (
     <VStack flex={1} bg="blue.400" pt={12}>
@@ -129,10 +165,7 @@ export function AdvertPreview() {
             </Text>
 
             <Text fontSize="lg" fontFamily="heading" color="blue.400">
-              <Text fontSize="sm">R$</Text>{" "}
-              {productData.price
-                .toString()
-                .replace(/(\d{3})(\d{3})(\d{2})$/g, ".$1.$2,$3")}
+              <Text fontSize="sm">R$</Text> {Currency(productData.price)}
             </Text>
           </HStack>
 
@@ -154,7 +187,7 @@ export function AdvertPreview() {
             Meios de pagamento:
           </Text>
 
-          <PaymentMethods paymentMethods={productData.payment_methods} />
+          <PaymentMethods paymentMethods={paymentMethods} />
         </VStack>
       </ScrollView>
 
