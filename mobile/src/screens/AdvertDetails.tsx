@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
+  Box,
+  Center,
   HStack,
   ScrollView,
   Text,
@@ -8,7 +10,7 @@ import {
   useToast,
   VStack,
 } from "native-base";
-import { Power, Trash, WhatsappLogo } from "phosphor-react-native";
+import { Power, TrashSimple, WhatsappLogo } from "phosphor-react-native";
 
 import AvatarImg from "@assets/avatar.png";
 
@@ -25,6 +27,7 @@ import { Loading } from "@components/Loading";
 import { useAuth } from "@hooks/useAuth";
 import { Linking } from "react-native";
 import { Currency } from "@utils/FormatText";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 type RouteParamsProps = {
   productId: string;
@@ -39,6 +42,7 @@ export function AdvertDetails() {
   const route = useRoute();
   const { user } = useAuth();
   const { productId } = route.params as RouteParamsProps;
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   async function fetchProduct() {
     try {
@@ -62,6 +66,46 @@ export function AdvertDetails() {
     }
   }
 
+  async function handleToggleIsActive() {
+    try {
+      await api.patch(`/products/${product.id}`, {
+        is_active: !product.is_active,
+      });
+
+      fetchProduct();
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível alterar o estado do anúncio";
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    }
+  }
+
+  async function handleProductRemove() {
+    try {
+      await api.delete(`/products/${product.id}`);
+
+      navigation.replace("home");
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível remover o anúncio";
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    }
+  }
+
   async function handleOpenWhatsApp(tel: string) {
     await Linking.openURL(`whatsapp://send?phone=${tel}`);
   }
@@ -81,7 +125,21 @@ export function AdvertDetails() {
           <Header title="" px={6} mb={3} />
         )}
 
-        <CarouselProducts images={product.product_images} />
+        <Center bg="gray.700">
+          <Box opacity={product.is_active ? 1 : 0.4}>
+            <CarouselProducts images={product.product_images} />
+          </Box>
+          {!product.is_active && (
+            <Text
+              color="gray.100"
+              fontSize="sm"
+              fontWeight="bold"
+              position="absolute"
+            >
+              ANÚNCIO DESATIVADO
+            </Text>
+          )}
+        </Center>
 
         <VStack px={6} mt={5} justifyContent="flex-start">
           <HStack alignItems="center" mb={6}>
@@ -152,17 +210,23 @@ export function AdvertDetails() {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Button title="Desativar anúncio" variant="dark" w="full" mb={2}>
-            <Power color={colors.gray[600]} size={sizes[4]} />
+          <Button
+            title={product.is_active ? "Desativar anúncio" : "Reativar anúncio"}
+            variant={product.is_active ? "dark" : "main"}
+            w="full"
+            mb={2}
+            onPress={handleToggleIsActive}
+          >
+            <Power color={colors.gray[100]} size={sizes[4]} />
           </Button>
 
           <Button
             title="Excluir anúncio"
             variant="light"
             w="full"
-            onPress={() => {}}
+            onPress={handleProductRemove}
           >
-            <Trash color={colors.gray[200]} size={sizes[4]} />
+            <TrashSimple color={colors.gray[600]} size={sizes[4]} />
           </Button>
         </VStack>
       ) : (
