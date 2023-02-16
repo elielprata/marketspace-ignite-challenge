@@ -1,5 +1,13 @@
 import { useCallback, useState } from "react";
-import { FlatList, HStack, Select, Text, useTheme, VStack } from "native-base";
+import {
+  FlatList,
+  HStack,
+  Select,
+  Text,
+  useTheme,
+  useToast,
+  VStack,
+} from "native-base";
 import { CaretDown, CaretUp } from "phosphor-react-native";
 
 import { api } from "@services/api";
@@ -11,10 +19,13 @@ import { Header } from "@components/Header";
 import { useAuth } from "@hooks/useAuth";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
+import { AppError } from "@utils/AppError";
 
 export function MyAdverts() {
+  const [isNewSelect, setIsNewSelect] = useState("all");
   const [adverts, setAdverts] = useState<ProductDTO[]>([]);
 
+  const toast = useToast();
   const { colors, sizes } = useTheme();
   const { user } = useAuth();
   const navigation = useNavigation<AppNavigatorRoutesProps>();
@@ -23,14 +34,51 @@ export function MyAdverts() {
     try {
       const response = await api.get("/users/products");
 
+      if (isNewSelect !== "all") {
+        if (isNewSelect === "new") {
+          const filterNewAdverts = response.data.reduce(
+            (acc: ProductDTO[], product: ProductDTO) => {
+              if (product.is_new === true) {
+                acc.push(product);
+              }
+              return acc;
+            },
+            []
+          );
+          return setAdverts(filterNewAdverts);
+        } else {
+          const filterNewAdverts = response.data.reduce(
+            (acc: ProductDTO[], product: ProductDTO) => {
+              if (product.is_new === false) {
+                acc.push(product);
+              }
+              return acc;
+            },
+            []
+          );
+          return setAdverts(filterNewAdverts);
+        }
+      }
+
       setAdverts(response.data);
-    } catch (error) {}
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível carregar os produtos";
+
+      toast.show({
+        title,
+        placement: "top",
+        bgColor: "red.500",
+      });
+    }
   }
 
   useFocusEffect(
     useCallback(() => {
       fetchProducts();
-    }, [adverts])
+    }, [isNewSelect])
   );
 
   return (
@@ -41,7 +89,6 @@ export function MyAdverts() {
         <Text fontSize="sm">{adverts.length} Anúncios</Text>
 
         <Select
-          selectedValue="all"
           placeholder="Choose Service"
           minWidth={110}
           rounded="lg"
@@ -66,6 +113,8 @@ export function MyAdverts() {
               style={{ marginRight: 8 }}
             />
           }
+          onValueChange={setIsNewSelect}
+          selectedValue={isNewSelect}
         >
           <Select.Item label="Todos" value="all" />
           <Select.Item label="Novo" value="new" />
