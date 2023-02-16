@@ -7,12 +7,14 @@ import { ArrowLeft, PencilSimpleLine, Plus } from "phosphor-react-native";
 type Props = IHStackProps & {
   title: string;
   goBack?: boolean;
+  navigateTo?: () => void;
   rightIcon?: "plus" | "pencil" | null;
 };
 
 export function Header({
   title,
   goBack = true,
+  navigateTo = () => {},
   rightIcon = null,
   ...rest
 }: Props) {
@@ -22,7 +24,7 @@ export function Header({
 
   function handleCreateEditAdvert() {
     if (rightIcon === "pencil") {
-      navigation.navigate("editAdvert");
+      navigateTo();
     } else if (rightIcon === "plus") {
       navigation.navigate("createAdvert");
     }
