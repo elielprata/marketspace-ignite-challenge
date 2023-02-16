@@ -1,9 +1,19 @@
-import { Divider, HStack, IInputProps, Input, useTheme } from "native-base";
+import {
+  Divider,
+  HStack,
+  IInputProps,
+  Input,
+  Pressable,
+  useTheme,
+} from "native-base";
 import { MagnifyingGlass, Sliders } from "phosphor-react-native";
 
-type Props = IInputProps & {};
+type Props = IInputProps & {
+  openModalFilter: () => void;
+  onSearch: () => void;
+};
 
-export function SearchInput() {
+export function SearchInput({ onSearch, openModalFilter, ...rest }: Props) {
   const { colors, sizes } = useTheme();
 
   return (
@@ -21,13 +31,17 @@ export function SearchInput() {
           bg: "gray.100",
           borderColor: "gray.500",
         }}
+        {...rest}
       />
-
-      <MagnifyingGlass color={colors.gray["600"]} size={sizes["5"]} />
+      <Pressable onPress={onSearch}>
+        <MagnifyingGlass color={colors.gray["600"]} size={sizes["5"]} />
+      </Pressable>
 
       <Divider mx={3} h="1/2" orientation="vertical" bg="gray.400:alpha.50" />
 
-      <Sliders color={colors.gray["600"]} size={sizes["5"]} />
+      <Pressable onPress={openModalFilter}>
+        <Sliders color={colors.gray["600"]} size={sizes["5"]} />
+      </Pressable>
     </HStack>
   );
 }
