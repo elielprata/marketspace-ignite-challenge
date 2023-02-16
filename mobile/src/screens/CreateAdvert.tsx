@@ -115,7 +115,7 @@ export function CreateAdvert() {
     );
   }
 
-  async function previewProducts(data: FormDataProps) {
+  async function handlePreviewProducts(data: FormDataProps) {
     if (productPhotos.length === 0) {
       return toast.show({
         title: "Adicione uma foto para o produto",
@@ -330,13 +330,19 @@ export function CreateAdvert() {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Button title="Cancelar" variant="light" mr={3} flex={1} />
+        <Button
+          title="Cancelar"
+          variant="light"
+          mr={3}
+          flex={1}
+          onPress={() => navigation.goBack()}
+        />
 
         <Button
           title="Avançar"
           variant="dark"
           flex={1}
-          onPress={handleSubmit(previewProducts)}
+          onPress={handleSubmit(handlePreviewProducts)}
         />
       </HStack>
     </VStack>
