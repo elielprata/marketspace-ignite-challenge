@@ -59,6 +59,7 @@ export type FormDataProps = {
 };
 
 export function EditAdvert() {
+  const [isLoading, setIsLoading] = useState(false);
   const [productPhotos, setProductPhotos] = useState<ProductImages[]>([]);
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
@@ -139,35 +140,46 @@ export function EditAdvert() {
   }
 
   async function handleProductPhotoRemove(photoPath: string) {
-    setProductPhotos((prevState) =>
-      prevState.filter(async (photo) => {
+    productPhotos.map(async (image) => {
+      if (image.id) {
         try {
-          console.log(photo.id);
-          if (photo.id) {
-            await api.delete("/products/images", {
-              data: { images: [photo.id] },
-            });
-          }
+          await api.delete("/products/images", {
+            data: { productImagesIds: [image.id] },
+          });
+
+          setProductPhotos((prevState) =>
+            prevState.filter((photo) => photo.path !== photoPath)
+          );
         } catch (error) {
           const isAppError = error instanceof AppError;
           const title = isAppError
             ? error.message
-            : "Não foi possível criar a conta. Tente novamente mais tarde.";
+            : "Não foi possível remover as imagens. Tente novamente mais tarde.";
 
           toast.show({ title, placement: "top", bgColor: "red.500" });
         }
-        photo.path !== photoPath;
-      })
-    );
+      } else {
+        setProductPhotos((prevState) =>
+          prevState.filter((photo) => photo.path !== photoPath)
+        );
+      }
+    });
   }
 
   async function handlePreviewProducts(data: FormDataProps) {
-    if (productPhotos.length === 0) {
-      return toast.show({
-        title: "Adicione uma foto para o produto",
-        placement: "top",
-        bgColor: "red.500",
-      });
+    try {
+      setIsLoading(true);
+      if (productPhotos.length === 0) {
+        return toast.show({
+          title: "Adicione uma foto para o produto",
+          placement: "top",
+          bgColor: "red.500",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
 
     navigation.navigate("advertPreview", {
@@ -400,6 +412,7 @@ export function EditAdvert() {
           variant="dark"
           flex={1}
           onPress={handleSubmit(handlePreviewProducts)}
+          isLoading={isLoading}
         />
       </HStack>
     </VStack>
