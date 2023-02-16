@@ -3,6 +3,7 @@ import {
   FlatList,
   Heading,
   HStack,
+  Pressable,
   Text,
   useTheme,
   useToast,
@@ -21,15 +22,19 @@ import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { HomeHeader } from "@components/HomeHeader";
 import { SearchInput } from "@components/SearchInput";
 import { AdvertCard } from "@components/AdvertCard";
+import { Loading } from "@components/Loading";
+import { HomeNavigatorRoutesProps } from "@routes/home.routes";
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [activeAdvertsLength, setActiveAdvertsLength] = useState(0);
   const [products, setProducts] = useState<ProductDTO[]>([]);
 
   const toast = useToast();
 
   const { colors, sizes } = useTheme();
   const navigation = useNavigation<AppNavigatorRoutesProps>();
+  const homeNavigation = useNavigation<HomeNavigatorRoutesProps>();
 
   function handleOpenAdvertDetails(productId: string) {
     navigation.navigate("advertDetails", { productId });
@@ -39,7 +44,19 @@ export function Home() {
     try {
       setIsLoading(true);
       const response = await api.get("/products");
+      const myProducts = await api.get("/users/products");
 
+      const activeAdverts = myProducts.data.reduce(
+        (acc: number, product: ProductDTO) => {
+          if (product.is_active) {
+            acc++;
+          }
+          return acc;
+        },
+        0
+      );
+
+      setActiveAdvertsLength(activeAdverts);
       setProducts(response.data);
     } catch (error) {
       const isAppError = error instanceof AppError;
@@ -63,6 +80,10 @@ export function Home() {
     }, [])
   );
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <VStack flex={1} bg="gray.200" px={6} pt={16}>
       <FlatList
@@ -81,16 +102,23 @@ export function Home() {
                 <Tag color={colors.blue["700"]} size={sizes["6"]} />
 
                 <VStack flex={1} ml={3}>
-                  <Heading>0</Heading>
+                  <Heading>{activeAdvertsLength}</Heading>
                   <Text>anúncios ativos</Text>
                 </VStack>
 
-                <HStack>
-                  <Text color="blue.700" fontSize="sm" fontWeight="bold" mr={2}>
-                    Meus anúncios
-                  </Text>
-                  <ArrowRight color={colors.blue["700"]} size={sizes["5"]} />
-                </HStack>
+                <Pressable onPress={() => homeNavigation.navigate("myAdverts")}>
+                  <HStack>
+                    <Text
+                      color="blue.700"
+                      fontSize="sm"
+                      fontWeight="bold"
+                      mr={2}
+                    >
+                      Meus anúncios
+                    </Text>
+                    <ArrowRight color={colors.blue["700"]} size={sizes["5"]} />
+                  </HStack>
+                </Pressable>
               </HStack>
             </VStack>
 
