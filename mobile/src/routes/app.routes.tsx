@@ -6,7 +6,6 @@ import {
 import { HomeTabs } from "./home.routes";
 
 import { ProductDTO } from "@dtos/ProductDTO";
-import { ProductImagesDTO } from "@dtos/ProductImagesDTO";
 
 import { AdvertDetails } from "@screens/AdvertDetails";
 import { CreateAdvert } from "@screens/CreateAdvert";
@@ -19,7 +18,9 @@ type AppRoutes = {
     productId: string;
   };
   createAdvert: undefined;
-  editAdvert: undefined;
+  editAdvert: {
+    productData: ProductDTO;
+  };
   advertPreview: {
     productData: {
       name: string;
@@ -29,7 +30,13 @@ type AppRoutes = {
       accept_trade: boolean;
       payment_methods: string[];
     };
-    images: ProductImagesDTO[];
+    images: {
+      id?: string | null;
+      name?: string;
+      path: string;
+      uri?: string;
+      type?: string | null;
+    }[];
   };
 };
 
