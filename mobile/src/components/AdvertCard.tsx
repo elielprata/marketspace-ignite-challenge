@@ -2,6 +2,7 @@ import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { Box, Center, HStack, Image, Text, VStack } from "native-base";
 
 import AvatarImg from "@assets/avatar.png";
+import ImageNotFound from "@assets/image-not-found.png";
 
 import { UserPhoto } from "./UserPhoto";
 import { api } from "@services/api";
@@ -23,9 +24,13 @@ export function AdvertCard({ data, userPhoto, active = true, ...rest }: Props) {
           w={150}
           resizeMode="cover"
           rounded="lg"
-          source={{
-            uri: `${api.defaults.baseURL}/images/${data.product_images[0].path}`,
-          }}
+          source={
+            data.product_images.length > 0
+              ? {
+                  uri: `${api.defaults.baseURL}/images/${data.product_images[0].path}`,
+                }
+              : ImageNotFound
+          }
           alt="Imagem do produto"
         />
 
