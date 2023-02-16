@@ -1,9 +1,7 @@
-import { ProductImagesDTO } from "@dtos/ProductImagesDTO";
 import { api } from "@services/api";
 import { Box, HStack, Image } from "native-base";
 import { useState } from "react";
 import { Dimensions } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Carousel from "react-native-reanimated-carousel";
 
 type Props = {
@@ -19,7 +17,7 @@ export function CarouselProducts({ images, preview = false }: Props) {
   const width = Dimensions.get("window").width;
 
   return (
-    <GestureHandlerRootView>
+    <Box>
       <Carousel
         loop
         width={width}
@@ -75,6 +73,6 @@ export function CarouselProducts({ images, preview = false }: Props) {
           }
         })}
       </HStack>
-    </GestureHandlerRootView>
+    </Box>
   );
 }
