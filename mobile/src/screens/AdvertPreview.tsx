@@ -30,6 +30,7 @@ import { Currency } from "@utils/FormatText";
 
 type RouteParamsProps = {
   productData: {
+    id?: string;
     name: string;
     description: string;
     is_new: string;
@@ -37,7 +38,13 @@ type RouteParamsProps = {
     accept_trade: boolean;
     payment_methods: string[];
   };
-  images: ProductImagesDTO[];
+  images: {
+    id?: string | null;
+    name: string;
+    path: string;
+    uri?: string | null;
+    type?: string | null;
+  }[];
 };
 
 type PaymentMethodProps = {
@@ -59,6 +66,14 @@ export function AdvertPreview() {
 
   const { productData, images } = route.params as RouteParamsProps;
 
+  function handlePublish() {
+    if (productData.id) {
+      handleUpdateProduct();
+    } else {
+      handleAddProduct();
+    }
+  }
+
   async function handleAddProduct() {
     try {
       setIsLoading(true);
@@ -77,6 +92,44 @@ export function AdvertPreview() {
       });
 
       navigation.navigate("advertDetails", { productId: product.data?.id });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : "Não foi possível criar a conta. Tente novamente mais tarde.";
+
+      toast.show({ title, placement: "top", bgColor: "red.500" });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleUpdateProduct() {
+    try {
+      setIsLoading(true);
+
+      if (productData.id) {
+        //await api.put(`/products/${productData.id}`, productData);
+
+        const uploadForm = new FormData();
+        uploadForm.append("product_id", productData.id);
+
+        let uploadImages: boolean = false;
+        images.forEach((image) => {
+          if (!image.id) {
+            uploadForm.append("images", image as any);
+            uploadImages = true;
+          }
+        });
+
+        if (uploadImages) {
+          await api.post("/products/images", uploadForm, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+        }
+
+        //navigation.navigate("advertDetails", { productId: productData.id });
+      }
     } catch (error) {
       const isAppError = error instanceof AppError;
       const title = isAppError
@@ -211,7 +264,7 @@ export function AdvertPreview() {
         <Button
           title="Publicar"
           flex={1}
-          onPress={handleAddProduct}
+          onPress={handlePublish}
           isLoading={isLoading}
         >
           <Tag color={colors.gray[200]} size={sizes[4]} />
