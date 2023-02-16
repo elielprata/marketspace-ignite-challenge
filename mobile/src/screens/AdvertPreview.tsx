@@ -109,7 +109,7 @@ export function AdvertPreview() {
       setIsLoading(true);
 
       if (productData.id) {
-        //await api.put(`/products/${productData.id}`, productData);
+        await api.put(`/products/${productData.id}`, productData);
 
         const uploadForm = new FormData();
         uploadForm.append("product_id", productData.id);
@@ -128,7 +128,7 @@ export function AdvertPreview() {
           });
         }
 
-        //navigation.navigate("advertDetails", { productId: productData.id });
+        navigation.navigate("advertDetails", { productId: productData.id });
       }
     } catch (error) {
       const isAppError = error instanceof AppError;
