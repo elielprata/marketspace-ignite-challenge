@@ -14,6 +14,7 @@ import { Loading } from "@components/Loading";
 import { THEME } from "./src/theme";
 
 import { AuthContextProvider } from "@contexts/AuthContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
@@ -25,9 +26,11 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      <AuthContextProvider>
-        {fontsLoaded ? <Routes /> : <Loading />}
-      </AuthContextProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AuthContextProvider>
+          {fontsLoaded ? <Routes /> : <Loading />}
+        </AuthContextProvider>
+      </GestureHandlerRootView>
     </NativeBaseProvider>
   );
 }
