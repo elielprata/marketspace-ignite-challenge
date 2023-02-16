@@ -38,7 +38,9 @@ export function CarouselProducts({ images, preview = false }: Props) {
             alt="Imagens do produto"
             source={
               preview
-                ? { uri: item.path }
+                ? item.id
+                  ? { uri: `${api.defaults.baseURL}/images/${item.path}` }
+                  : { uri: item.path }
                 : { uri: `${api.defaults.baseURL}/images/${item.path}` }
             }
           />
