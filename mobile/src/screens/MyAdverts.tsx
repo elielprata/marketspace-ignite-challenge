@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FlatList, HStack, Select, Text, useTheme, VStack } from "native-base";
 import { CaretDown, CaretUp } from "phosphor-react-native";
 
@@ -9,7 +9,7 @@ import { ProductDTO } from "@dtos/ProductDTO";
 import { AdvertCard } from "@components/AdvertCard";
 import { Header } from "@components/Header";
 import { useAuth } from "@hooks/useAuth";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 export function MyAdverts() {
@@ -27,16 +27,18 @@ export function MyAdverts() {
     } catch (error) {}
   }
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts();
+    }, [adverts])
+  );
 
   return (
     <VStack flex={1} bg="gray.200" px={6} pt={16}>
       <Header title="Meus anúncios" goBack={false} rightIcon="plus" />
 
       <HStack mt={8} mb={5} justifyContent="space-between" alignItems="center">
-        <Text fontSize="sm">10 Anúncios</Text>
+        <Text fontSize="sm">{adverts.length} Anúncios</Text>
 
         <Select
           selectedValue="all"
@@ -77,6 +79,7 @@ export function MyAdverts() {
         renderItem={({ item }) => (
           <AdvertCard
             data={item}
+            active={item.is_active}
             userPhoto={user.avatar}
             onPress={() =>
               navigation.navigate("advertDetails", { productId: item.id })
