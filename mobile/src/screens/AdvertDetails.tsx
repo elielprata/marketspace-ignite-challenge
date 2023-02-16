@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useCallback, useState } from "react";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import {
   Box,
   Center,
@@ -110,9 +114,11 @@ export function AdvertDetails() {
     await Linking.openURL(`whatsapp://send?phone=${tel}`);
   }
 
-  useEffect(() => {
-    fetchProduct();
-  }, [productId]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProduct();
+    }, [productId])
+  );
 
   return isLoading ? (
     <Loading />
@@ -120,7 +126,15 @@ export function AdvertDetails() {
     <VStack flex={1} bg="gray.200" pt={12}>
       <ScrollView _contentContainerStyle={{ pb: 50 }}>
         {product.user_id === user.id ? (
-          <Header title="" px={6} mb={3} rightIcon="pencil" />
+          <Header
+            title=""
+            px={6}
+            mb={3}
+            rightIcon="pencil"
+            navigateTo={() =>
+              navigation.navigate("editAdvert", { productData: product })
+            }
+          />
         ) : (
           <Header title="" px={6} mb={3} />
         )}
