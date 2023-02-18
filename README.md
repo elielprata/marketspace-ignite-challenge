@@ -6,7 +6,7 @@ React Native
 
 ## Sobre
 
-O project **Marketspace** foi o terceiro desafio do curso **Bootcamp Ignite da RocketSeat**, foi mais complexo pra desenvolver pois precisei avançar em vários conhecimentos esbarrei em situações que tive que buscar solução na comunidade mas que consegui resolver.
+O projeto **Marketspace** foi o terceiro desafio do curso **Bootcamp Ignite da RocketSeat**, foi mais complexo pra desenvolver pois precisei avançar em vários conhecimentos esbarrei em situações que tive que buscar solução na comunidade mas que consegui resolver.
 
 ---
 
