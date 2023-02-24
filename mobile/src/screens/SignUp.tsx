@@ -68,9 +68,9 @@ export function SignUp() {
   } = useForm<FormDataProps>({
     resolver: yupResolver(signUpSchema),
     defaultValues: {
-      name: "Eliel",
-      email: "elieuprata@gmail.com",
-      tel: "9499227767",
+      name: "test",
+      email: "test@gmail.com",
+      tel: "94999999999",
       password: "123456",
       password_confirm: "123456",
     },
